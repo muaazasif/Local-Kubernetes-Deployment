@@ -4,6 +4,7 @@
   "description": "A cloud-native todo application with AI-powered chatbot functionality",
   "main": "index.js",
   "scripts": {
+    "prestart": "cd backend && npm install",
     "start": "cd backend && npm start",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
     "backend": "cd backend && npm run dev",
