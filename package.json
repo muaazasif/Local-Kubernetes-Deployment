@@ -1,0 +1,48 @@
+{
+  "name": "todo-chatbot-cloud-native",
+  "version": "1.0.0",
+  "description": "A cloud-native todo application with AI-powered chatbot functionality",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npx serve -s .",
+    "build": "echo 'Build scripts for Docker images are in the respective directories'",
+    "docker:build": "./build-images.sh",
+    "docker:push": "./build-images.sh --push",
+    "k8s:deploy": "cd helm/todo-chatbot && helm install todo-chatbot .",
+    "k8s:undeploy": "cd helm/todo-chatbot && helm uninstall todo-chatbot",
+    "test": "echo 'No tests yet, but the application is ready for testing'",
+    "lint": "echo 'Linting configuration will be added based on project needs'"
+  },
+  "keywords": [
+    "todo",
+    "chatbot",
+    "kubernetes",
+    "cloud-native",
+    "docker",
+    "helm",
+    "ai",
+    "javascript",
+    "nodejs",
+    "react"
+  ],
+  "author": "Professional Developer",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/muaazasif/Local-Kubernetes-Deployment.git"
+  },
+  "bugs": {
+    "url": "https://github.com/muaazasif/Local-Kubernetes-Deployment/issues"
+  },
+  "homepage": "https://github.com/muaazasif/Local-Kubernetes-Deployment#readme"
+}

@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Chatbot - Professional Edition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #todoInput {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        #todoInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #addBtn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        #addBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        #addBtn:active {
+            transform: translateY(0);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .todo-list {
+            margin-bottom: 30px;
+        }
+
+        .todo-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            animation: slideInUp 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .todo-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .todo-item:hover::before {
+            opacity: 1;
+        }
+
+        .todo-item:hover {
+            transform: translateX(5px);
+            border-color: #667eea;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .todo-text.completed {
+            text-decoration: line-through;
+            color: #888;
+            opacity: 0.7;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .complete-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .complete-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .chat-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            animation: fadeIn 0.6s ease-out 0.4s both;
+        }
+
+        .chat-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .chat-messages {
+            height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chat-message {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 18px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .bot-message {
+            background: #e3f2fd;
+            border-bottom-left-radius: 5px;
+            margin-right: auto;
+        }
+
+        .user-message {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 5px;
+            margin-left: auto;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        #chatInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        #chatInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #sendBtn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        #sendBtn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .typing-indicator.visible {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        .bounce {
+            animation: bounce 1s ease infinite;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .todo-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .todo-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-robot bounce"></i> Todo Chatbot</h1>
+            <p>Your intelligent task manager with AI assistance</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="todoInput" placeholder="Enter a new todo..." autocomplete="off">
+                    <button id="addBtn" class="pulse"><i class="fas fa-plus"></i> Add Todo</button>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalTodos">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="completedTodos">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="pendingTodos">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+            </div>
+            
+            <div class="todo-list" id="todoList">
+                <!-- Todos will be added here dynamically -->
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3><i class="fas fa-comments"></i> Chat with your Todo Assistant</h3>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message bot-message">
+                        Hello! I'm your Todo Assistant. You can ask me about your tasks or add new ones!
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <i class="fas fa-circle-notch fa-spin"></i> Assistant is typing...
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Ask about your todos..." autocomplete="off">
+                    <button id="sendBtn"><i class="fas fa-paper-plane"></i> Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API base URL - in production this would come from environment
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+        
+        // DOM elements
+        const todoInput = document.getElementById('todoInput');
+        const addBtn = document.getElementById('addBtn');
+        const todoList = document.getElementById('todoList');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatMessages = document.getElementById('chatMessages');
+        const typingIndicator = document.getElementById('typingIndicator');
+        
+        // Stats elements
+        const totalTodosEl = document.getElementById('totalTodos');
+        const completedTodosEl = document.getElementById('completedTodos');
+        const pendingTodosEl = document.getElementById('pendingTodos');
+        
+        // Load todos on page load
+        window.onload = loadTodos;
+        
+        // Event listeners
+        addBtn.addEventListener('click', addTodo);
+        sendBtn.addEventListener('click', sendMessage);
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTodo();
+        });
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        // Functions
+        async function loadTodos() {
+            try {
+                showTypingIndicator();
+                await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
+                
+                const response = await fetch(`${API_BASE_URL}/todos`);
+                const todos = await response.json();
+                
+                todoList.innerHTML = '';
+                todos.forEach(todo => {
+                    addTodoToList(todo);
+                });
+                
+                updateStats();
+                hideTypingIndicator();
+            } catch (error) {
+                console.error('Error loading todos:', error);
+                hideTypingIndicator();
+                addBotMessage('Sorry, I couldn\'t load your todos right now.');
+            }
+        }
+        
+        async function addTodo() {
+            const text = todoInput.value.trim();
+            if (!text) return;
+            
+            try {
+                showTypingIndicator();
+                await new Promise(resolve => setTimeout(resolve, 300)); // Simulate API delay
+                
+                const response = await fetch(`${API_BASE_URL}/todos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text })
+                });
+                
+                const newTodo = await response.json();
+                addTodoToList(newTodo);
+                todoInput.value = '';
+                
+                updateStats();
+                addBotMessage(`Added "${text}" to your todo list! Great job!`);
+                hideTypingIndicator();
+            } catch (error) {
+                console.error('Error adding todo:', error);
+                hideTypingIndicator();
+                addBotMessage('Sorry, I couldn\'t add that todo. Please try again.');
+            }
+        }
+        
+        async function toggleTodo(id) {
+            const todoItem = document.querySelector(`[data-id="${id}"]`);
+            const isCompleted = !todoItem.classList.contains('completed');
+            
+            try {
+                showTypingIndicator();
+                await new Promise(resolve => setTimeout(resolve, 300)); // Simulate API delay
+                
+                await fetch(`${API_BASE_URL}/todos/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ completed: isCompleted })
+                });
+                
+                const todoText = todoItem.querySelector('.todo-text');
+                todoText.classList.toggle('completed');
+                
+                updateStats();
+                
+                // Add bot response
+                const todoTextContent = todoText.textContent;
+                if (isCompleted) {
+                    addBotMessage(`Marked "${todoTextContent}" as completed! Excellent work! 🎉`);
+                } else {
+                    addBotMessage(`Reopened "${todoTextContent}". Keep going! 💪`);
+                }
+                hideTypingIndicator();
+            } catch (error) {
+                console.error('Error updating todo:', error);
+                hideTypingIndicator();
+                addBotMessage('Sorry, I couldn\'t update that todo. Please try again.');
+            }
+        }
+        
+        async function deleteTodo(id) {
+            try {
+                showTypingIndicator();
+                await new Promise(resolve => setTimeout(resolve, 300)); // Simulate API delay
+                
+                await fetch(`${API_BASE_URL}/todos/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                document.querySelector(`[data-id="${id}"]`).remove();
+                
+                updateStats();
+                
+                // Add bot response
+                addBotMessage(`Removed task from your list. ✅`);
+                hideTypingIndicator();
+            } catch (error) {
+                console.error('Error deleting todo:', error);
+                hideTypingIndicator();
+                addBotMessage('Sorry, I couldn\'t remove that todo. Please try again.');
+            }
+        }
+        
+        function addTodoToList(todo) {
+            const li = document.createElement('div');
+            li.className = 'todo-item';
+            li.setAttribute('data-id', todo.id);
+            
+            const todoText = document.createElement('span');
+            todoText.className = 'todo-text';
+            todoText.textContent = todo.text;
+            if (todo.completed) {
+                todoText.classList.add('completed');
+            }
+            
+            todoText.addEventListener('click', () => toggleTodo(todo.id));
+            
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'todo-actions';
+            
+            const completeBtn = document.createElement('button');
+            completeBtn.className = 'action-btn complete-btn';
+            completeBtn.innerHTML = todo.completed ? '<i class="fas fa-undo"></i>' : '<i class="fas fa-check"></i>';
+            completeBtn.title = todo.completed ? 'Reopen' : 'Complete';
+            completeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleTodo(todo.id);
+            });
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'action-btn delete-btn';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.title = 'Delete';
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteTodo(todo.id);
+            });
+            
+            actionsDiv.appendChild(completeBtn);
+            actionsDiv.appendChild(deleteBtn);
+            
+            li.appendChild(todoText);
+            li.appendChild(actionsDiv);
+            todoList.appendChild(li);
+        }
+        
+        function addMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}-message`;
+            messageDiv.textContent = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addBotMessage(text) {
+            addMessage('bot', text);
+        }
+        
+        function addUserMessage(text) {
+            addMessage('user', text);
+        }
+        
+        function showTypingIndicator() {
+            typingIndicator.classList.add('visible');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function hideTypingIndicator() {
+            typingIndicator.classList.remove('visible');
+        }
+        
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            addUserMessage(message);
+            chatInput.value = '';
+            showTypingIndicator();
+            
+            try {
+                // Simple chatbot responses based on keywords
+                let botResponse = "I'm your todo assistant. You can ask me about your todos or add new ones.";
+                
+                if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi')) {
+                    botResponse = "Hello! I'm your todo assistant. You can ask me about your tasks or add new ones using the form above. How can I help you today?";
+                } else if (message.toLowerCase().includes('todo') || message.toLowerCase().includes('task')) {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/todos`);
+                        const todos = await response.json();
+                        
+                        if (todos.length === 0) {
+                            botResponse = "You don't have any todos right now. Would you like to add one? Just type your task in the input field above!";
+                        } else {
+                            const incompleteTodos = todos.filter(t => !t.completed);
+                            const completeTodos = todos.filter(t => t.completed);
+                            
+                            botResponse = `You have ${incompleteTodos.length} pending tasks and ${completeTodos.length} completed tasks. You're making great progress! 🌟`;
+                        }
+                    } catch (error) {
+                        console.error('Error fetching todos:', error);
+                        botResponse = "Sorry, I couldn't retrieve your todos right now. Please try again later.";
+                    }
+                } else if (message.toLowerCase().includes('help')) {
+                    botResponse = "I can help you manage your todos! You can ask me about your tasks, add new ones, mark them as completed, or delete them. Just type what you'd like to do!";
+                } else if (message.toLowerCase().includes('complete') || message.toLowerCase().includes('done')) {
+                    botResponse = "To mark a task as complete, just click on the task text or the checkmark button next to it. Great job staying organized! 🎯";
+                } else if (message.toLowerCase().includes('add')) {
+                    botResponse = "To add a new task, type it in the input field at the top and click 'Add Todo' or press Enter. Your tasks will appear below! 📝";
+                } else if (message.toLowerCase().includes('delete') || message.toLowerCase().includes('remove')) {
+                    botResponse = "To remove a task, click the trash icon next to it. Remember, every completed or removed task is a step toward your goals! 🚀";
+                } else {
+                    botResponse = "Thanks for your message! I'm still learning. You can ask me about your todos, add new ones, or get help with managing your tasks.";
+                }
+                
+                // Simulate thinking time
+                await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+                
+                addBotMessage(botResponse);
+                hideTypingIndicator();
+            } catch (error) {
+                console.error('Error sending message:', error);
+                hideTypingIndicator();
+                addBotMessage('Sorry, I encountered an error processing your request. Please try again.');
+            }
+        }
+        
+        function updateStats() {
+            const allTodos = document.querySelectorAll('.todo-item');
+            const completedTodos = document.querySelectorAll('.todo-text.completed');
+            
+            totalTodosEl.textContent = allTodos.length;
+            completedTodosEl.textContent = completedTodos.length;
+            pendingTodosEl.textContent = allTodos.length - completedTodos.length;
+        }
+        
+        // Add some fun animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add subtle hover effects to all buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
