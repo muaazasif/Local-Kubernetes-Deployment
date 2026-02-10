@@ -1,9 +1,10 @@
 FROM nginx:alpine
 
-COPY index.html /usr/share/nginx/html/
-COPY *.css /usr/share/nginx/html/ 2>/dev/null || echo "No CSS files to copy"
-COPY *.js /usr/share/nginx/html/ 2>/dev/null || echo "No JS files to copy"
+# Copy the frontend files to the nginx html directory
+COPY . /usr/share/nginx/html/
 
+# Expose port 80
 EXPOSE 80
 
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
